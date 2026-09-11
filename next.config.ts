@@ -43,14 +43,29 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       /**
-       * Long-lived immutable caching for the portrait and PWA icons. These files change
-       * only when deliberately replaced, so a year-long cache with `immutable` means repeat
-       * visitors never refetch them. Page speed is a ranking factor and the portrait is the
-       * single largest asset on the site.
+       * Caching for the portrait and the icon set.
+       *
+       * THIS USED TO BE `max-age=31536000, immutable` AND IT WAS A BUG. `immutable` is a
+       * promise to the browser that the bytes at this URL will never change, so it does not
+       * revalidate — not on reload, not for a year. That is only safe when the filename
+       * changes whenever the content does (a content hash, which Next does for its own
+       * bundles). These filenames are stable and referenced from manifest.json and
+       * layout.tsx, so replacing an icon left every previous visitor — including whoever
+       * replaced it — pinned to the old bytes with no way to notice.
+       *
+       * An hour of freshness plus a week of `stale-while-revalidate` keeps the performance
+       * benefit for repeat views (served instantly from cache) while guaranteeing an icon
+       * swap propagates on its own within the hour.
+       *
+       * If you ever want `immutable` back, version the filenames instead — profile-2.webp,
+       * icon-192-v2.png — and update the references in the same commit.
        */
       {
-        source: "/:file(profile.webp|icon-192.png|icon-512.png)",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+        source:
+          "/:file(profile.webp|favicon.ico|icon0.svg|icon1.png|apple-icon.png|icon-192.png|icon-512.png)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=604800" },
+        ],
       },
       /**
        * The AI-facing text files are edited by hand and should never be served stale to a
