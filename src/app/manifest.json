@@ -1,0 +1,41 @@
+{
+  "id": "/",
+  "name": "Ayush Rana",
+  "short_name": "Ayush Rana",
+  "description": "I build governed AI for regulated industries \u2014 private by architecture, auditable by design. Founder & CTO at Warelytics, previously automotive software at KPIT.",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["personal", "technology", "business"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#080b0a",
+  "background_color": "#080b0a",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "start_url": "/",
+  "scope": "/"
+}

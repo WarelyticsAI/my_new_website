@@ -1,0 +1,289 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================================================
+   Design tokens — Ayush Rana.
+
+   A dark, high-contrast scheme with a mint signal colour. The intent is "instrument
+   panel", not "creative portfolio": the work is governed analytics and attested audit
+   trails, so the palette borrows from terminals and monitoring dashboards rather than
+   from editorial layouts.
+
+   NOTE ON TOKEN NAMES
+   The names below (`paper`, `ink`, `ink-soft`, `ink-faint`) are inherited from the
+   upstream light-theme project and are now semantically inverted: `paper` is the near
+   black background and `ink` is the near white foreground. Renaming them would touch
+   eight component files for no visual gain, so they are kept and documented instead.
+   Read them as "background" and "foreground". If you ever do rename them, do it in one
+   pass across every component or the site will render half-inverted.
+
+   Contrast, measured against --color-paper (#080b0a):
+     ink        #e9f4ef   17.6:1   AAA
+     accent     #5ef2c9   14.2:1   AAA
+     signal     #ffb454   11.2:1   AAA
+     ink-soft   #9fb3ab    8.2:1   AAA
+     ink-faint  #7d918a    5.9:1   AA   (used for small mono labels — do not darken)
+
+   When you change the background, update in the same pass:
+     - PORTFOLIO_THEME_COLOR in src/lib/content.ts    (browser chrome)
+     - theme_color + background_color in src/app/manifest.json
+     - colorScheme in the viewport export in src/app/layout.tsx
+   Otherwise the browser chrome clashes with the page.
+   ============================================================ */
+
+@theme {
+  --color-paper: #080b0a;
+  --color-paper-2: #111917;
+  --color-ink: #e9f4ef;
+  --color-ink-soft: #9fb3ab;
+  --color-ink-faint: #7d918a;
+  --color-accent: #5ef2c9;
+  --color-signal: #ffb454;
+  --color-hairline: rgba(233, 244, 239, 0.12);
+
+  --font-sans: var(--font-sans-var);
+  --font-mono: var(--font-mono-var);
+  --font-display: var(--font-display);
+
+  --radius-4xl: 2rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-token: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #080b0a;
+  --foreground: #e9f4ef;
+  --card: #111917;
+  --card-foreground: #e9f4ef;
+  --popover: #111917;
+  --popover-foreground: #e9f4ef;
+  /* Inverted from the light theme: the primary surface is now light-on-dark. */
+  --primary: #e9f4ef;
+  --primary-foreground: #080b0a;
+  --secondary: #1a2421;
+  --secondary-foreground: #e9f4ef;
+  --muted: #1a2421;
+  --muted-foreground: #9fb3ab;
+  --accent: #1a2421;
+  --accent-foreground: #e9f4ef;
+  /* Red rather than mint: destructive must not share the affirmative signal colour. */
+  --destructive: #ff6b5e;
+  --border: rgba(233, 244, 239, 0.12);
+  --input: rgba(233, 244, 239, 0.18);
+  --ring: #5ef2c9;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* `min-height`, not `height`, and deliberately no `overflow` on either.
+
+     THE RULE THAT CAUSED TWO SCROLLBARS HERE, TWICE. Per the CSS overflow spec, if one
+     axis is set to anything other than `visible`, the other axis computes from `visible`
+     to `auto`. So `overflow-x: hidden` silently turns an element into a *vertical* scroll
+     container. Pair that with a fixed `height: 100%` (or any absolutely-positioned child
+     taller than the box) and it scrolls independently inside the document's own scrollbar.
+
+     It happened on `body` first, then again on the hero element, which is why nothing
+     should set `overflow-x` on either. Nothing in the hero needs it any more: the marquee
+     is clipped by its own wrapper and the bloom is painted within its own box. If you find
+     yourself reaching for `overflow-x: hidden` to hide a stray horizontal scrollbar, find
+     what is actually overflowing instead — or use `overflow-x: clip`, which clips without
+     creating a scroll container. */
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  /* Visible keyboard focus. The dark scheme makes the browser default nearly
+     invisible, and this is the only affordance a keyboard user has. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .mono-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    font-size: 0.66rem;
+    color: var(--color-ink-faint);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--color-hairline);
+    background: rgba(233, 244, 239, 0.04);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Animated underline for the accent name word */
+  .name-underline {
+    position: relative;
+  }
+  .name-underline::after {
+    content: "";
+    position: absolute;
+    left: 0.04em;
+    right: 0.04em;
+    bottom: 0.08em;
+    height: 0.06em;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  h1:hover .name-underline::after {
+    transform: scaleX(1);
+  }
+
+  /* Char mask wrapper for reveal animations (accommodates descenders) */
+  .char-mask {
+    display: inline-block;
+    overflow: hidden;
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+    vertical-align: bottom;
+  }
+  .char {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  /* Film grain. Lower opacity than a light theme needs — noise reads much louder
+     against near-black, and at the light-theme value it looked like sensor dust. */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Faint mint bloom behind the hero. Replaces the light theme's paper texture as the
+     thing that stops the background reading as flat black.
+
+     `inset: 0` is load-bearing. The first version of this sized the pseudo-element itself
+     — `width: min(90rem, 160%); aspect-ratio: 1; top: -18%` — which made it a square up to
+     1440x1440px hanging outside its container. Combined with `overflow-x: hidden` on the
+     hero (which the spec promotes to `overflow-y: auto`, making that element a scroll
+     container) the oversized box became scrollable content: a second scrollbar and roughly
+     a screenful of empty space below the fold.
+
+     Sizing the gradient instead of the element gets the same look with nothing to clip:
+     the ellipse is 130% wide and 95% tall, centred above the top edge, painted entirely
+     within a box that exactly matches its container. */
+  .bloom::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      130% 95% at 50% -12%,
+      rgba(94, 242, 201, 0.1) 0%,
+      rgba(94, 242, 201, 0.035) 34%,
+      transparent 66%
+    );
+  }
+
+  /* Hairline grid, very faint — the "instrument panel" cue. */
+  .gridlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+      linear-gradient(to right, rgba(233, 244, 239, 0.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(233, 244, 239, 0.028) 1px, transparent 1px);
+    background-size: 68px 68px;
+    mask-image: radial-gradient(ellipse at 50% 40%, black 25%, transparent 78%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Live equalizer bars for the status widget */
+  @keyframes eq {
+    0%,
+    100% {
+      transform: scaleY(0.3);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+  .eq-bar {
+    transform-origin: bottom;
+    animation: eq 0.9s ease-in-out infinite;
+  }
+}
+
+/* Accessibility requirement, not a style choice. Animations need real final-state
+   fallbacks — the GSAP timelines in portfolio.tsx check this same media query and set
+   their end states directly rather than merely running faster. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
