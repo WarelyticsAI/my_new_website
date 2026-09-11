@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { SITE } from "@/lib/content"
+import { PROFILE_IMAGE, SITE } from "@/lib/content"
 
 // Explicitly welcome AI answer engines and generative crawlers (GEO/AEO).
 // Being named-and-allowed signals that this content is safe to index and cite.
@@ -42,7 +42,12 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         // Explicitly allowing the portrait and the AI map alongside "/" — nothing here is
         // disallowed, and being explicit documents the intent for anyone auditing later.
-        allow: ["/", "/profile.jpg", "/llms.txt"],
+        //
+        // The portrait path comes from PROFILE_IMAGE rather than being written out. It was
+        // hardcoded as "/profile.jpg" and silently went stale when the asset became
+        // profile.webp, leaving robots.txt allowing a URL that 404s. Deriving it means the
+        // two cannot drift again.
+        allow: ["/", PROFILE_IMAGE.src, "/llms.txt"],
       },
       {
         userAgent: AI_CRAWLERS,

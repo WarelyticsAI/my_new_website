@@ -26,14 +26,20 @@
 export const SITE = {
   name: "Ayush Rana",
   /**
-   * TODO(ayush): register a domain and set these three.
-   * ayushrana.com is taken by an unrelated product designer, so .dev / .in / .tech are the
-   * realistic options. Everything canonical — metadataBase, JSON-LD @ids, the sitemap,
-   * OpenGraph URLs — derives from `url`, so this must be the real production domain before
-   * launch or search engines will index the wrong canonical.
+   * The production domain. Everything canonical derives from `url` — metadataBase, the
+   * canonical tag, every JSON-LD @id, the sitemap, the image sitemap entry, and the
+   * OpenGraph URLs.
+   *
+   * MUST match whichever hostname is set as primary in Vercel. If you make www the primary
+   * domain there and leave the apex here, the canonical tag will point at a URL that
+   * 301-redirects, which is a self-inflicted ranking problem: search engines follow the
+   * redirect and then find a canonical pointing back at the redirecting URL.
+   *
+   * Note this is NOT an environment variable, deliberately. Changing domain means editing
+   * this file and committing, not setting something in Vercel.
    */
-  domain: "ayushrana.dev",
-  url: "https://ayushrana.dev",
+  domain: "ayush-rana.com",
+  url: "https://ayush-rana.com",
   /**
    * What he is. Both halves are accurate and both are doing work: "AI engineer" is the
    * capability a buyer searches for, "founder & CTO" is the proof he has shipped it.
@@ -207,7 +213,7 @@ export const ROLES: Role[] = [
  * the JSON-LD, and answer engines weight freshness heavily. Using a build timestamp would
  * claim freshness that never happened, which is both dishonest and detectable.
  */
-export const CONTENT_UPDATED = "2026-09-11"
+export const CONTENT_UPDATED = "2026-09-12"
 
 /** When this site first published. Required by Google's ProfilePage spec. */
 export const SITE_PUBLISHED = "2026-09-11"
